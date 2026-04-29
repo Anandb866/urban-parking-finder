@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(DRIVER)
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings    Booking[]
+  parkingLots ParkingLot[]
+}
+
+enum Role {
+  DRIVER
+  OWNER
+}
+
+model ParkingLot {
+  id           String        @id @default(cuid())
+  name         String
+  address      String
+  city         String
+  latitude     Float
+  longitude    Float
+  totalSlots   Int
+  pricePerHour Float
+  vehicleTypes VehicleType[]
+  amenities    String[]
+  images       String[]
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  ownerId String
+  owner   User         @relation(fields: [ownerId], references: [id])
+  slots   ParkingSlot[]
+}
+
+enum VehicleType {
+  TWO_WHEELER
+  FOUR_WHEELER
+  EV
+}
+
+model ParkingSlot {
+  id          String      @id @default(cuid())
+  slotNumber  String
+  vehicleType VehicleType
+  isAvailable Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+
+  lotId    String
+  lot      ParkingLot @relation(fields: [lotId], references: [id])
+  bookings Booking[]
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  startTime   DateTime
+  endTime     DateTime
+  totalAmount Float
+  status      BookingStatus @default(CONFIRMED)
+  vehicleNo   String
+  qrCode      String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  userId String
+  user   User        @relation(fields: [userId], references: [id])
+  slotId String
+  slot   ParkingSlot @relation(fields: [slotId], references: [id])
+}
+
+enum BookingStatus {
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
