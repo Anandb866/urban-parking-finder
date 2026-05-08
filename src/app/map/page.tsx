@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ParkingLot } from "@/types";
 import ParkingLotCard from "@/components/ui/ParkingLotCard";
+import MapView from "@/components/map/MapView";
 
 const VEHICLE_TYPES = [
   { value: "", label: "All" },
@@ -16,6 +17,7 @@ export default function MapPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [vehicleType, setVehicleType] = useState("");
+  const [selectedLot, setSelectedLot] = useState<string | null>(null);
 
   async function fetchLots() {
     setLoading(true);
@@ -89,18 +91,28 @@ export default function MapPage() {
               </p>
             </div>
           ) : (
-            filtered.map((lot) => <ParkingLotCard key={lot.id} lot={lot} />)
+            filtered.map((lot) => (
+              <div
+                key={lot.id}
+                onClick={() => setSelectedLot(lot.id)}
+                className={`cursor-pointer rounded-2xl transition-all ${
+                  selectedLot === lot.id ? "ring-2 ring-blue-500" : ""
+                }`}
+              >
+                <ParkingLotCard lot={lot} />
+              </div>
+            ))
           )}
         </div>
       </div>
 
-      {/* map placeholder */}
-      <div className="hidden md:flex flex-1 bg-blue-50 items-center justify-center flex-col gap-3">
-        <div className="text-6xl">🗺️</div>
-        <p className="font-semibold text-gray-600">Map coming soon</p>
-        <p className="text-sm text-gray-400">
-          Add NEXT_PUBLIC_MAPBOX_TOKEN to enable map
-        </p>
+      {/* map */}
+      <div className="hidden md:flex flex-1 relative">
+        <MapView
+          lots={filtered}
+          selectedLotId={selectedLot}
+          onSelectLot={setSelectedLot}
+        />
       </div>
     </div>
   );
