@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ParkingLot, VehicleType } from "@/types";
 import { formatCurrency, vehicleTypeLabel } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 function toDatetimeLocal(date: Date) {
   return date.toISOString().slice(0, 16);
@@ -78,8 +79,11 @@ export default function BookingPage() {
       setSubmitting(false);
 
       if (!res.ok) {
-        setError(data.error || "Booking failed — status: " + res.status);
+        const msg = data.error || "Booking failed";
+        setError(msg);
+        toast.error(msg);
       } else {
+        toast.success("Booking confirmed! 🎉");
         router.push("/dashboard");
       }
     } catch (err: any) {

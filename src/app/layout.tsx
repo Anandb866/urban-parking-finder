@@ -9,7 +9,7 @@ import Providers from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ParkKing",
+  title: "ParkKing — Find Parking in Seconds",
   description: "Find and book parking in Indian cities",
 };
 
