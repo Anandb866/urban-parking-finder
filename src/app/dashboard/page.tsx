@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Booking } from "@/types";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { QRCodeSVG } from "qrcode.react";
 
 const STATUS_STYLES: Record<string, string> = {
   CONFIRMED: "bg-blue-50 text-blue-700",
@@ -189,18 +190,23 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* QR code reference */}
               {booking.qrCode && booking.status === "CONFIRMED" && (
-                <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white text-xs">
-                    QR
-                  </div>
+                <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-4">
+                  <QRCodeSVG
+                    value={booking.qrCode}
+                    size={64}
+                    level="M"
+                    includeMargin={false}
+                  />
                   <div>
                     <div className="text-xs font-semibold text-gray-700">
-                      Booking ID
+                      Scan at entry
                     </div>
-                    <div className="text-xs font-mono text-gray-500">
+                    <div className="text-xs font-mono text-gray-500 mt-0.5">
                       {booking.qrCode}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      Show this QR code at the parking gate
                     </div>
                   </div>
                 </div>
